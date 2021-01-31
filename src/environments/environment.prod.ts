@@ -1,3 +1,5 @@
 export const environment = {
-  production: true
+  production: true,
+  baseAPIUrl: 'https://slides.ssbcsj.org/sssbcsj_api'
+
 };

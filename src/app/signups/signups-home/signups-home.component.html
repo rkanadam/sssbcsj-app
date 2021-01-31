@@ -1,0 +1,13 @@
+<div class="container">
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label i18n>Events</mat-label>
+      <mat-select>
+        <mat-option [value]="signupSheetIndex" *ngFor="let signupSheet of signupSheets;index as signupSheetIndex">
+          {{signupSheet.date}} - {{signupSheet.description}}
+        </mat-option>
+      </mat-select>
+      <mat-hint i18n>Please select an event to signup for</mat-hint>
+    </mat-form-field>
+  </p>
+</div>

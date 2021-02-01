@@ -5,7 +5,7 @@ import {HomeComponent} from './home/home.component';
 import {CommonUiModule} from '../common-ui/common-ui.module';
 import {AuthModule} from '../auth/auth.module';
 import { VerifyPhoneComponent } from './verify-phone/verify-phone.component';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 
 @NgModule({
@@ -14,7 +14,8 @@ import {ReactiveFormsModule} from '@angular/forms';
     CommonModule,
     AuthModule,
     CommonUiModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
   ]
 })
 export class HomeModule {

@@ -18,7 +18,7 @@ export class ProfileComponent implements OnInit {
     this.user = firebase.auth().currentUser;
   }
 
-  openDialog(): void {
+  openVerifyPhoneNumberDialog(): void {
     this.dialog.open(VerifyPhoneComponent);
   }
 }

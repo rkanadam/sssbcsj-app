@@ -6,6 +6,7 @@ import {AuthService} from '../../auth/auth.service';
 import {FormControl} from '@angular/forms';
 import firebase from 'firebase/app';
 import {isEmpty} from 'lodash-es';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-verify-phone',
@@ -27,7 +28,8 @@ export class VerifyPhoneComponent implements AfterViewInit {
     private dialogRef: MatDialogRef<VerifyPhoneComponent>,
     private httpClient: HttpClient,
     private utils: UtilsService,
-    private authService: AuthService) {
+    private authService: AuthService,
+    private snackBar: MatSnackBar) {
   }
 
   cancel(): void {
@@ -42,7 +44,10 @@ export class VerifyPhoneComponent implements AfterViewInit {
     }, {
       headers: this.authService.getHeaders(),
     }).subscribe(isSuccessful => {
-      console.log(isSuccessful);
+      this.snackBar.open('SMS successfully verified. Will refresh page');
+      window.location.reload();
+    }, (error) => {
+      this.snackBar.open('Could not verify phone. Please retry in some time');
     });
   }
 
@@ -55,6 +60,10 @@ export class VerifyPhoneComponent implements AfterViewInit {
       headers: this.authService.getHeaders(),
     }).subscribe(({verificationToken}) => {
       this.verificationToken = verificationToken;
+      this.snackBar.open('SMS for phone verification send. Please enter verification code to finish verification');
+    }, (error) => {
+      console.error(error);
+      this.snackBar.open('Could not verify phone. Please retry in some time');
     });
   }
 

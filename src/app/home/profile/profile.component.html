@@ -1,22 +1,35 @@
-<div class="container">
-  <mat-card *ngIf="user">
-    <mat-card-header>
-      <mat-card-title i18n>{{user.displayName}}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="row">
-        <h3>
-          <mat-icon>email</mat-icon>
-          <a [href]="'mailto:' + user.email">{{user.email}}</a>
-        </h3>
-      </div>
-      <div class="row">
-        <button mat-raised-button (click)="openDialog()">
-          <mat-icon>phone</mat-icon>
-          <span *ngIf="user.phoneNumber">{{user.phoneNumber}}</span>
-          <span *ngIf="!user.phoneNumber" i18n>Click to provide a phone number</span>
-        </button>
-      </div>
-    </mat-card-content>
-  </mat-card>
+<div class="container-fluid" *ngIf="user">
+  <div class="row">
+    <div class="col">
+      <mat-form-field appearance="outline">
+        <mat-label i18n>Display Name</mat-label>
+        <input matInput readonly [(ngModel)]="user.displayName">
+        <mat-icon matPrefix>sentiment_very_satisfied</mat-icon>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <mat-form-field appearance="outline">
+        <mat-label i18n>E-Mail</mat-label>
+        <input matInput [(ngModel)]="user.email" readonly>
+        <mat-icon matPrefix>email</mat-icon>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <mat-form-field appearance="outline" (click)="openVerifyPhoneNumberDialog()">
+        <mat-label i18n>Phone Number</mat-label>
+        <input matInput readonly [(ngModel)]="user.phoneNumber">
+        <mat-icon matPrefix>phone</mat-icon>
+        <mat-icon matSuffix>
+          {{user.phoneNumber ? 'mode' : 'add_ic_call'}}
+        </mat-icon>
+        <mat-hint>Adding a phone number will help us send SMS reminders to the registered phone number. Click to edit /
+          add a phone number.
+        </mat-hint>
+      </mat-form-field>
+    </div>
+  </div>
 </div>

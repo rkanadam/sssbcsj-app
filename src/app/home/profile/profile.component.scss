@@ -3,18 +3,10 @@
   height: 100%;
 }
 
-.container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-
-  mat-card-content {
-    row {
-      display: block;
-      padding: 3em 0em;
-    }
-  }
+.row {
+  margin: 1em 0em;
 }
 
-
+mat-form-field {
+  width: 100%;
+}

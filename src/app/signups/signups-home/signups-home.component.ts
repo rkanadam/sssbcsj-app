@@ -1,11 +1,11 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {MediaMatcher} from '@angular/cdk/layout';
-import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {UtilsService} from '../../common-ui/utils.service';
 import {AuthService} from '../../auth/auth.service';
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
+import {ApiService} from '../../common-ui/api.service';
 
 interface SignupItem {
   item: string;
@@ -64,7 +64,7 @@ export class SignupsHomeComponent implements OnInit, OnDestroy {
 
 
   constructor(private changeDetectorRef: ChangeDetectorRef, media: MediaMatcher,
-              private httpClient: HttpClient,
+              private api: ApiService,
               private route: ActivatedRoute,
               private utils: UtilsService,
               private authService: AuthService) {
@@ -124,16 +124,14 @@ export class SignupsHomeComponent implements OnInit, OnDestroy {
 
   signup(): void {
     if (this.selectedSignupItem && this.selectedSignupSheet) {
-      const s: Signup = {
+      const signup: Signup = {
         itemCount: parseInt(this.selectedSignupItemQuantityFormControl.value, 10),
         itemIndex: this.selectedSignupItem.itemIndex,
         sheetTitle: this.selectedSignupSheet.sheetTitle,
         spreadSheetId: this.selectedSignupSheet.spreadsheetId
       };
 
-      this.httpClient.post<boolean>(`${this.utils.getBaseApiUrl()}/signups`, s, {
-        headers: this.authService.getHeaders()
-      }).subscribe(result => {
+      this.api.post<boolean>(`signups`, signup).subscribe(result => {
         console.log(result);
       });
     }
@@ -142,11 +140,8 @@ export class SignupsHomeComponent implements OnInit, OnDestroy {
 
   setSelectedTag(tag: string): void {
     this.selectedTag = tag;
-    this.httpClient.get<SignupSheet[]>(`${this.utils.getBaseApiUrl()}/signups`, {
-      headers: this.authService.getHeaders(),
-      params: {
-        tag: this.selectedTag || ''
-      }
+    this.api.get<SignupSheet[]>('signups', {
+      tag: this.selectedTag || ''
     }).subscribe(signupSheets => {
       this.signupSheets = signupSheets;
     });

@@ -1,12 +1,12 @@
 import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
-import {HttpClient} from '@angular/common/http';
 import {UtilsService} from '../../common-ui/utils.service';
 import {AuthService} from '../../auth/auth.service';
 import {FormControl} from '@angular/forms';
 import firebase from 'firebase/app';
 import {isEmpty} from 'lodash-es';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {ApiService} from '../../common-ui/api.service';
 
 @Component({
   selector: 'app-verify-phone',
@@ -26,7 +26,7 @@ export class VerifyPhoneComponent implements AfterViewInit {
 
   constructor(
     private dialogRef: MatDialogRef<VerifyPhoneComponent>,
-    private httpClient: HttpClient,
+    private api: ApiService,
     private utils: UtilsService,
     private authService: AuthService,
     private snackBar: MatSnackBar) {
@@ -38,11 +38,9 @@ export class VerifyPhoneComponent implements AfterViewInit {
 
   verify(): void {
     this.isVerifying = true;
-    this.httpClient.post<boolean>(`${this.utils.getBaseApiUrl()}/profile/verifyPhoneSMSCode`, {
+    this.api.post<boolean>('profile/verifyPhoneSMSCode', {
       verificationToken: this.verificationToken,
       verificationCode: this.verificationCode.value
-    }, {
-      headers: this.authService.getHeaders(),
     }).subscribe(isSuccessful => {
       this.snackBar.open('SMS successfully verified. Will refresh page');
       window.location.reload();
@@ -53,11 +51,9 @@ export class VerifyPhoneComponent implements AfterViewInit {
 
   sendVerificationCode(): void {
     this.isVerifying = true;
-    this.httpClient.post<{ verificationToken: string }>(`${this.utils.getBaseApiUrl()}/profile/sendVerificationCode`, {
+    this.api.post<{ verificationToken: string }>('/profile/sendVerificationCode', {
       recaptchaToken: this.recaptchaToken,
       phoneNumber: this.phoneNumber.value
-    }, {
-      headers: this.authService.getHeaders(),
     }).subscribe(({verificationToken}) => {
       this.verificationToken = verificationToken;
       this.snackBar.open('SMS for phone verification send. Please enter verification code to finish verification');

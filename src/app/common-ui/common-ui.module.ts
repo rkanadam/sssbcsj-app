@@ -16,12 +16,15 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {ApiIndicatorComponent} from './api-indicator/api-indicator.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 
 @NgModule({
-  declarations: [],
+  declarations: [ApiIndicatorComponent],
   imports: [
-    CommonModule
+    CommonModule,
+    MatProgressSpinnerModule,
   ],
   exports: [
     MatCardModule,
@@ -37,8 +40,10 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     MatDialogModule,
     MatFormFieldModule,
     ReactiveFormsModule,
+    MatProgressSpinnerModule,
     MatInputModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    ApiIndicatorComponent
   ],
   providers: [UtilsService]
 })

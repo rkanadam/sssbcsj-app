@@ -1,11 +1,9 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {MediaMatcher} from '@angular/cdk/layout';
-import {ActivatedRoute, Params} from '@angular/router';
 import {Subscription} from 'rxjs';
-import {UtilsService} from '../../common-ui/utils.service';
-import {AuthService} from '../../auth/auth.service';
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
 import {ApiService} from '../../common-ui/api.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 interface SignupItem {
   item: string;
@@ -44,7 +42,6 @@ export class SignupsHomeComponent implements OnInit, OnDestroy {
   signupSheets = new Array<SignupSheet>();
   mobileQuery: MediaQueryList;
 
-  private selectedTag = '';
   private params$$: Subscription | undefined;
   selectedSignupSheetFormControl = new FormControl();
   selectedSignupSheet: SignupSheet | null = null;
@@ -65,9 +62,8 @@ export class SignupsHomeComponent implements OnInit, OnDestroy {
 
   constructor(private changeDetectorRef: ChangeDetectorRef, media: MediaMatcher,
               private api: ApiService,
-              private route: ActivatedRoute,
-              private utils: UtilsService,
-              private authService: AuthService) {
+              private snackBar: MatSnackBar
+  ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this.mobileQuery.addEventListener('change', this.mobileQueryListener);
   }
@@ -84,9 +80,7 @@ export class SignupsHomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.params$$ = this.route.queryParams.subscribe((p: Params) => {
-      this.setSelectedTag(p.tag);
-    });
+    this.fetchSignups();
     this.selectedSignupSheetFormControl.valueChanges.subscribe((selectedSignupSheet: SignupSheet) => {
       this.selectedSignupSheet = selectedSignupSheet;
     });
@@ -132,18 +126,26 @@ export class SignupsHomeComponent implements OnInit, OnDestroy {
       };
 
       this.api.post<boolean>(`signups`, signup).subscribe(result => {
-        console.log(result);
+        if (result) {
+          this.fetchSignups();
+          this.snackBar.open(`You successfully signed up.`, 'OK', {
+            duration: 2000
+          });
+        } else {
+          this.snackBar.open(`Something went wrong, please try again in sometime.`, 'OK', {
+            duration: 2000
+          });
+        }
       });
     }
   }
 
 
-  setSelectedTag(tag: string): void {
-    this.selectedTag = tag;
-    this.api.get<SignupSheet[]>('signups', {
-      tag: this.selectedTag || ''
-    }).subscribe(signupSheets => {
+  fetchSignups(): void {
+    this.api.get<SignupSheet[]>('signups', {}).subscribe(signupSheets => {
       this.signupSheets = signupSheets;
+      this.selectedSignupSheet = null;
+      this.selectedSignupItem = null;
     });
   }
 

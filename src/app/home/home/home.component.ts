@@ -15,7 +15,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   mobileQueryListener(): void {
-    this.changeDetectorRef.detectChanges();
+    if (this.changeDetectorRef) {
+      this.changeDetectorRef.detectChanges();
+    }
   }
 
   ngOnDestroy(): void {

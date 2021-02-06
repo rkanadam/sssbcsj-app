@@ -4,6 +4,14 @@ import {Subscription} from 'rxjs';
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
 import {ApiService} from '../../common-ui/api.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import * as dateFormat from 'dateformat';
+
+interface ParsedSheet {
+  spreadsheetId: string;
+  spreadSheetTitle: string;
+  sheetTitle: string;
+  date: Date;
+}
 
 interface SignupItem {
   item: string;
@@ -22,7 +30,6 @@ interface SignupSheet {
   signups: Array<SignupItem>;
   spreadsheetId: string;
   sheetTitle: string;
-  sheetId: number;
 }
 
 interface Signup {
@@ -39,7 +46,7 @@ interface Signup {
   styleUrls: ['./signups-home.component.scss']
 })
 export class SignupsHomeComponent implements OnInit, OnDestroy {
-  signupSheets = new Array<SignupSheet>();
+  signupSheets = new Array<ParsedSheet>();
   mobileQuery: MediaQueryList;
 
   private params$$: Subscription | undefined;
@@ -81,8 +88,14 @@ export class SignupsHomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.fetchSignups();
-    this.selectedSignupSheetFormControl.valueChanges.subscribe((selectedSignupSheet: SignupSheet) => {
-      this.selectedSignupSheet = selectedSignupSheet;
+    this.selectedSignupSheetFormControl.valueChanges.subscribe((selected: ParsedSheet) => {
+      this.selectedSignupSheet = null;
+      this.selectedSignupItem = null;
+      this.api.get<SignupSheet>('signupSheet',
+        {
+          spreadSheetId: selected.spreadsheetId,
+          sheetTitle: selected.sheetTitle
+        }).subscribe((signupSheet) => this.selectedSignupSheet = signupSheet);
     });
     this.selectedSignupItemFormControl.valueChanges.subscribe((selectedSignupItem: SignupItem) => {
       this.selectedSignupItem = selectedSignupItem;
@@ -142,7 +155,7 @@ export class SignupsHomeComponent implements OnInit, OnDestroy {
 
 
   fetchSignups(): void {
-    this.api.get<SignupSheet[]>('signups', {}).subscribe(signupSheets => {
+    this.api.get<Array<ParsedSheet>>('signups', {}).subscribe(signupSheets => {
       this.signupSheets = signupSheets;
       this.selectedSignupSheet = null;
       this.selectedSignupItem = null;
@@ -151,5 +164,9 @@ export class SignupsHomeComponent implements OnInit, OnDestroy {
 
   getSignupLocation(selectedSignupSheet: SignupSheet): string {
     return `https://www.google.com/maps/search/${encodeURIComponent(selectedSignupSheet.location)}`;
+  }
+
+  formatDate(date: Date): string {
+    return dateFormat(date, 'DDDD, mmm/dd/yyyy');
   }
 }

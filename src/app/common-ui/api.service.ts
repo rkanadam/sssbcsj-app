@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {UtilsService} from './utils.service';
-import {Observable, ReplaySubject, Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {AuthService} from '../auth/auth.service';
 import {catchError, tap} from 'rxjs/operators';
 
@@ -31,7 +31,7 @@ export class ApiService {
         this.apiRequest$$.next(ApiRequestState.SUCCEEDED);
       }), catchError((err, caught) => {
         this.apiRequest$$.next(ApiRequestState.FAILED);
-        return caught;
+        throw caught;
       }));
   }
 

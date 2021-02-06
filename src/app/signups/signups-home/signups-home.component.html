@@ -5,7 +5,7 @@
         <mat-label i18n>Events</mat-label>
         <mat-select formControlName="selectedSignupSheet">
           <mat-option [value]="signupSheet" *ngFor="let signupSheet of signupSheets">
-            {{signupSheet.date}} - {{signupSheet.title}}
+            {{formatDate(signupSheet.date)}} - {{signupSheet.spreadSheetTitle}}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -96,7 +96,9 @@
     </div>
     <div class="row" *ngIf="selectedSignupSheet && selectedSignupItem">
       <div class="col-12">
-        <button mat-raised-button color="primary" [disabled]="!this.selectedSignupSheetForm.valid" i18n (click)="signup()">Signup</button>
+        <button mat-raised-button color="primary" [disabled]="!this.selectedSignupSheetForm.valid" i18n
+                (click)="signup()">Signup
+        </button>
       </div>
     </div>
   </form>

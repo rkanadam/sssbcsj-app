@@ -1,0 +1,9 @@
+<h1 mat-dialog-title>Send an E-Mail Reminder</h1>
+<div mat-dialog-content>
+  <ckeditor [editor]="Editor" [config]="config" [(ngModel)]="template"></ckeditor>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button color="primary" (click)="sendSMS()">Send</button>
+  <button mat-button mat-dialog-close>Close</button>
+</div>
+

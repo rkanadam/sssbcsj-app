@@ -5,39 +5,12 @@ import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
 import {ApiService} from '../../common-ui/api.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import * as dateFormat from 'dateformat';
-
-interface ParsedSheet {
-  spreadsheetId: string;
-  spreadSheetTitle: string;
-  sheetTitle: string;
-  date: Date;
-}
-
-interface SignupItem {
-  item: string;
-  itemIndex: number;
-  quantity: string;
-  itemCount: number;
-  notes: string;
-}
-
-interface SignupSheet {
-  date: string;
-  location: string;
-  tags: string[];
-  title: string;
-  description: string;
-  signups: Array<SignupItem>;
-  spreadsheetId: string;
-  sheetTitle: string;
-}
-
-interface Signup {
-  spreadSheetId: string;
-  sheetTitle: string;
-  itemIndex: number;
-  itemCount: number;
-}
+import {MatTableDataSource} from '@angular/material/table';
+import {SelectionModel} from '@angular/cdk/collections';
+import {MatDialog} from '@angular/material/dialog';
+import {SmsReminderComponent} from '../sms-reminder/sms-reminder.component';
+import {ParsedSheet, Signee, Signup, SignupItem, SignupSheet} from '../types';
+import {EmailReminderComponent} from '../email-reminder/email-reminder.component';
 
 
 @Component({
@@ -48,6 +21,8 @@ interface Signup {
 export class SignupsHomeComponent implements OnInit, OnDestroy {
   signupSheets = new Array<ParsedSheet>();
   mobileQuery: MediaQueryList;
+  displayedColumns: string[] = ['select', 'position', 'item', 'itemCount', 'name', 'phoneNumber', 'email', 'signedUpOn'];
+
 
   private params$$: Subscription | undefined;
   selectedSignupSheetFormControl = new FormControl();
@@ -66,17 +41,25 @@ export class SignupsHomeComponent implements OnInit, OnDestroy {
     selectedSignupItemQuantity: this.selectedSignupItemQuantityFormControl
   });
 
+  signeesDataSource = new MatTableDataSource<Signee>();
 
-  constructor(private changeDetectorRef: ChangeDetectorRef, media: MediaMatcher,
+  initialSelection = [];
+  selectedSignees = new SelectionModel<Signee>(true, this.initialSelection);
+
+  constructor(private changeDetectorRef: ChangeDetectorRef,
+              media: MediaMatcher,
               private api: ApiService,
-              private snackBar: MatSnackBar
+              private snackBar: MatSnackBar,
+              private dialog: MatDialog
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this.mobileQuery.addEventListener('change', this.mobileQueryListener);
   }
 
   mobileQueryListener(): void {
-    this.changeDetectorRef.detectChanges();
+    if (this.changeDetectorRef) {
+      this.changeDetectorRef.detectChanges();
+    }
   }
 
   ngOnDestroy(): void {
@@ -95,7 +78,10 @@ export class SignupsHomeComponent implements OnInit, OnDestroy {
         {
           spreadSheetId: selected.spreadsheetId,
           sheetTitle: selected.sheetTitle
-        }).subscribe((signupSheet) => this.selectedSignupSheet = signupSheet);
+        }).subscribe((signupSheet) => {
+        this.selectedSignupSheet = signupSheet;
+        this.signeesDataSource.data = signupSheet.signees || [];
+      });
     });
     this.selectedSignupItemFormControl.valueChanges.subscribe((selectedSignupItem: SignupItem) => {
       this.selectedSignupItem = selectedSignupItem;
@@ -169,4 +155,37 @@ export class SignupsHomeComponent implements OnInit, OnDestroy {
   formatDate(date: Date): string {
     return dateFormat(date, 'DDDD, mmm/dd/yyyy');
   }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected(): boolean {
+    const numSelected = this.selectedSignees.selected.length;
+    const numRows = this.signeesDataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle(): void {
+    this.isAllSelected() ?
+      this.selectedSignees.clear() :
+      this.signeesDataSource.data.forEach(row => this.selectedSignees.select(row));
+  }
+
+  openSmsReminderDialog(): void {
+    this.dialog.open(SmsReminderComponent, {
+      data: {
+        signees: this.selectedSignees.selected,
+        signupSheet: this.selectedSignupSheet
+      }
+    });
+  }
+
+  openEmailReminderDialog(): void {
+    this.dialog.open(EmailReminderComponent, {
+      data: {
+        signees: this.selectedSignees.selected,
+        signupSheet: this.selectedSignupSheet
+      }
+    });
+  }
+
 }

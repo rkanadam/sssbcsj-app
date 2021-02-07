@@ -16,3 +16,29 @@ mat-form-field {
   margin: 1em 0em;
 }
 
+table {
+  width: 100%;
+  display: table;
+}
+
+td[mat-cell] {
+  padding: 0.25em;
+  font-size: 75%;
+}
+
+.mat-column-select {
+  overflow: initial;
+}
+
+.footer {
+  padding: 1em;
+
+  > * {
+    margin: 0em 1em;
+  }
+
+  > :first-child {
+    margin-left: 0.5em;
+  }
+}
+

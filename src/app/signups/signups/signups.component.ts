@@ -11,6 +11,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {SmsReminderComponent} from '../sms-reminder/sms-reminder.component';
 import {ParsedSheet, Signee, Signup, SignupItem, SignupSheet} from '../types';
 import {EmailReminderComponent} from '../email-reminder/email-reminder.component';
+import * as FileSaver from 'file-saver';
 
 
 @Component({
@@ -48,7 +49,7 @@ export class SignupsComponent implements OnInit, OnDestroy {
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               media: MediaMatcher,
-              private api: ApiService,
+              public api: ApiService,
               private snackBar: MatSnackBar,
               private dialog: MatDialog
   ) {
@@ -75,7 +76,7 @@ export class SignupsComponent implements OnInit, OnDestroy {
       this.selectedSignupSheet = null;
       this.selectedSignupItem = null;
       // tslint:disable-next-line:max-line-length
-      this.api.get<SignupSheet>(`/signups:detailed/${encodeURIComponent(selected.spreadsheetId)}/${encodeURIComponent(selected.sheetTitle)}`,
+      this.api.get<SignupSheet>(`signups:detailed/${encodeURIComponent(selected.spreadsheetId)}/${encodeURIComponent(selected.sheetTitle)}`,
         {}).subscribe((signupSheet) => {
         this.selectedSignupSheet = signupSheet;
         this.signeesDataSource.data = signupSheet.signees || [];
@@ -186,4 +187,22 @@ export class SignupsComponent implements OnInit, OnDestroy {
     });
   }
 
+  export(): void {
+    this.api.getBlob('export', {}).subscribe((blob: Blob) => {
+        const date = dateFormat(new Date(), 'mmddyyyy_HHMMss');
+        FileSaver.saveAs(blob, `export_signups_${date}.csv`);
+      },
+      error => {
+        console.log('Error downloading the file.', error);
+        this.snackBar.open(`Could not download export.`, 'OK', {
+          duration: 2000
+        });
+      },
+    );
+  }
+
+  isAdmin() {
+    return this.api
+
+  }
 }

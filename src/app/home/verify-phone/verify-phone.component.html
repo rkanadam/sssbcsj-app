@@ -2,7 +2,8 @@
 <mat-dialog-content class="mat-typography">
   <mat-form-field appearance="outline">
     <mat-label>Phone Number</mat-label>
-    <input matInput [formControl]="phoneNumber" required="required">
+    <input matInput [formControl]="phoneNumber" required="required" minlength="10" maxlength="10">
+    <mat-hint>10 digits, no spaces. Example 1234567890</mat-hint>
   </mat-form-field>
   <div>
     <div #recaptcha></div>

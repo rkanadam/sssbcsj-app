@@ -15,10 +15,10 @@ import {EmailReminderComponent} from '../email-reminder/email-reminder.component
 
 @Component({
   selector: 'app-signups-home',
-  templateUrl: './signups-home.component.html',
-  styleUrls: ['./signups-home.component.scss']
+  templateUrl: './signups.component.html',
+  styleUrls: ['./signups.component.scss']
 })
-export class SignupsHomeComponent implements OnInit, OnDestroy {
+export class SignupsComponent implements OnInit, OnDestroy {
   signupSheets = new Array<ParsedSheet>();
   mobileQuery: MediaQueryList;
   displayedColumns: string[] = ['select', 'position', 'item', 'itemCount', 'name', 'phoneNumber', 'email', 'signedUpOn'];
@@ -74,11 +74,9 @@ export class SignupsHomeComponent implements OnInit, OnDestroy {
     this.selectedSignupSheetFormControl.valueChanges.subscribe((selected: ParsedSheet) => {
       this.selectedSignupSheet = null;
       this.selectedSignupItem = null;
-      this.api.get<SignupSheet>('signupSheet',
-        {
-          spreadSheetId: selected.spreadsheetId,
-          sheetTitle: selected.sheetTitle
-        }).subscribe((signupSheet) => {
+      // tslint:disable-next-line:max-line-length
+      this.api.get<SignupSheet>(`/signups:detailed/${encodeURIComponent(selected.spreadsheetId)}/${encodeURIComponent(selected.sheetTitle)}`,
+        {}).subscribe((signupSheet) => {
         this.selectedSignupSheet = signupSheet;
         this.signeesDataSource.data = signupSheet.signees || [];
       });
@@ -141,7 +139,7 @@ export class SignupsHomeComponent implements OnInit, OnDestroy {
 
 
   fetchSignups(): void {
-    this.api.get<Array<ParsedSheet>>('signups', {}).subscribe(signupSheets => {
+    this.api.get<Array<ParsedSheet>>('signups:summarised', {}).subscribe(signupSheets => {
       this.signupSheets = signupSheets;
       this.selectedSignupSheet = null;
       this.selectedSignupItem = null;

@@ -2,7 +2,7 @@ import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {UtilsService} from '../../common-ui/utils.service';
 import {AuthService} from '../../auth/auth.service';
-import {FormControl} from '@angular/forms';
+import {FormControl, Validators} from '@angular/forms';
 import firebase from 'firebase/app';
 import {isEmpty} from 'lodash-es';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -16,7 +16,10 @@ import {ApiService} from '../../common-ui/api.service';
 export class VerifyPhoneComponent implements AfterViewInit {
 
   isVerifying = false;
-  phoneNumber = new FormControl('');
+  phoneNumber = new FormControl('', [
+    Validators.required,
+    Validators.pattern(/^\d{10}$/),
+  ]);
   verificationCode = new FormControl('');
   @ViewChild('recaptcha') recaptcha?: ElementRef;
   private recaptchaToken = '';
@@ -39,6 +42,7 @@ export class VerifyPhoneComponent implements AfterViewInit {
   verify(): void {
     this.isVerifying = true;
     this.api.post<boolean>('profile/verifyPhoneSMSCode', {
+      phoneNumber: this.phoneNumber.value,
       verificationToken: this.verificationToken,
       verificationCode: this.verificationCode.value
     }).subscribe(isSuccessful => {
@@ -51,7 +55,7 @@ export class VerifyPhoneComponent implements AfterViewInit {
 
   sendVerificationCode(): void {
     this.isVerifying = true;
-    this.api.post<{ verificationToken: string }>('/profile/sendVerificationCode', {
+    this.api.post<{ verificationToken: string }>('profile/sendVerificationCode', {
       recaptchaToken: this.recaptchaToken,
       phoneNumber: this.phoneNumber.value
     }).subscribe(({verificationToken}) => {

@@ -13,10 +13,9 @@
                  [opened]="mobileQuery.matches === false"
                  [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">
       <mat-nav-list>
-        <a mat-list-item routerLink="/signups" i18n>Service</a>
-        <a mat-list-item routerLink="/signups" [queryParams]="{tag:'devotion'}" i18n>Devotion</a>
-        <a mat-list-item routerLink="/signups" [queryParams]="{tag:'sse'}" i18n>SSE</a>
-        <a mat-list-item routerLink="/profile" i18n>Profile</a>
+        <a mat-list-item routerLink="/signups" routerLinkActive="active" i18n>Service</a>
+        <a mat-list-item routerLink="/mySignups" routerLinkActive="active" i18n>My Signups</a>
+        <a mat-list-item routerLink="/profile" routerLinkActive="active" i18n>Profile</a>
       </mat-nav-list>
     </mat-sidenav>
 

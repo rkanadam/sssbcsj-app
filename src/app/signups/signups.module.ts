@@ -1,15 +1,16 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {SignupsHomeComponent} from './signups-home/signups-home.component';
+import {SignupsComponent} from './signups/signups.component';
 import {CommonUiModule} from '../common-ui/common-ui.module';
 import { SmsReminderComponent } from './sms-reminder/sms-reminder.component';
 import { EmailReminderComponent } from './email-reminder/email-reminder.component';
+import { MySignupsComponent } from './my-signups/my-signups.component';
 
 
 @NgModule({
-  declarations: [SignupsHomeComponent, SmsReminderComponent, EmailReminderComponent],
+  declarations: [SignupsComponent, SmsReminderComponent, EmailReminderComponent, MySignupsComponent],
   exports: [
-    SignupsHomeComponent
+    SignupsComponent
   ],
   imports: [
     CommonModule,

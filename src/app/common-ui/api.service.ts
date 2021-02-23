@@ -32,7 +32,7 @@ export class ApiService {
         this.apiRequest$$.next(ApiRequestState.SUCCEEDED);
       }), catchError((err, caught) => {
         this.apiRequest$$.next(ApiRequestState.FAILED);
-        throw caught;
+        return throwError(caught);
       }));
   }
 
@@ -47,7 +47,7 @@ export class ApiService {
         this.apiRequest$$.next(ApiRequestState.SUCCEEDED);
       }), catchError((err, caught) => {
         this.apiRequest$$.next(ApiRequestState.FAILED);
-        throw caught;
+        return throwError(caught);
       }));
   }
 

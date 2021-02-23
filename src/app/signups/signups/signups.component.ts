@@ -13,6 +13,7 @@ import {ParsedSheet, Signee, Signup, SignupItem, SignupSheet} from '../types';
 import {EmailReminderComponent} from '../email-reminder/email-reminder.component';
 import * as FileSaver from 'file-saver';
 
+const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/i;
 
 @Component({
   selector: 'app-signups-home',
@@ -201,8 +202,9 @@ export class SignupsComponent implements OnInit, OnDestroy {
     );
   }
 
-  isAdmin() {
-    return this.api
-
+  parseDescription(description: string): string {
+    return description
+      .replace(URL_REGEX, (url: string) => `<a href="${url}">${url}</a>`)
+      .replace('\n', '<br/>');
   }
 }

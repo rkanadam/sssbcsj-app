@@ -204,7 +204,7 @@ export class SignupsComponent implements OnInit, OnDestroy {
 
   parseDescription(description: string): string {
     return description
-      .replace(URL_REGEX, (url: string) => `<a href="${url}">${url}</a>`)
+      .replace(URL_REGEX, (url: string) => `<a href="${url}" target="_blank">${url}</a>`)
       .replace('\n', '<br/>');
   }
 }

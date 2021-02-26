@@ -3,7 +3,7 @@ import * as firebaseui from 'firebaseui';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import {AuthService} from '../auth.service';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-signin',
@@ -14,7 +14,7 @@ export class SigninComponent implements AfterViewInit {
 
   @ViewChild('signin') signinElement?: ElementRef;
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute) {
     const firebaseConfig = {
       apiKey: 'AIzaSyB7-Ci3HY80mwyFW9mFuUQ6E7R0NT2FXck',
       authDomain: 'ssbcsj-registration.firebaseapp.com',
@@ -36,7 +36,14 @@ export class SigninComponent implements AfterViewInit {
             const u = firebase.auth().currentUser;
             u?.getIdToken().then((idToken) => {
               this.authService.setAuthToken(idToken);
-              this.router.navigate(['signups']);
+              if (this.route.snapshot.queryParamMap && this.route.snapshot.queryParamMap.has('returnUrl')) {
+                const url = this.route.snapshot.queryParamMap.get('returnUrl');
+                if (url) {
+                  this.router.navigateByUrl(url);
+                }
+              } else {
+                this.router.navigate(['signups']);
+              }
             });
             return false;
           }

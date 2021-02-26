@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {MediaMatcher} from '@angular/cdk/layout';
-import {Subscription} from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
 import {ApiService} from '../../common-ui/api.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -12,6 +12,9 @@ import {SmsReminderComponent} from '../sms-reminder/sms-reminder.component';
 import {ParsedSheet, Signee, Signup, SignupItem, SignupSheet} from '../types';
 import {EmailReminderComponent} from '../email-reminder/email-reminder.component';
 import * as FileSaver from 'file-saver';
+import {ActivatedRoute} from '@angular/router';
+import {debounceTime, filter, map} from 'rxjs/operators';
+import {isEmpty} from 'lodash-es';
 
 const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/i;
 
@@ -48,9 +51,13 @@ export class SignupsComponent implements OnInit, OnDestroy {
   initialSelection = [];
   selectedSignees = new SelectionModel<Signee>(true, this.initialSelection);
 
+  private fetchSignupsSubject = new Subject<boolean>();
+  private fetchSignups$$: Subscription | null = null;
+
   constructor(private changeDetectorRef: ChangeDetectorRef,
               media: MediaMatcher,
               public api: ApiService,
+              private route: ActivatedRoute,
               private snackBar: MatSnackBar,
               private dialog: MatDialog
   ) {
@@ -69,10 +76,36 @@ export class SignupsComponent implements OnInit, OnDestroy {
     if (this.params$$) {
       this.params$$.unsubscribe();
     }
+    if (this.fetchSignups$$) {
+      this.fetchSignups$$.unsubscribe();
+    }
   }
 
   ngOnInit(): void {
-    this.fetchSignups();
+    let selectedSignupSheetTitle = '';
+    this.params$$ = this.route.queryParams
+      .pipe(
+        map(params => (params.q || '').toString())
+      ).subscribe((q) => {
+        selectedSignupSheetTitle = q;
+        this.fetchSignups();
+      });
+    this.fetchSignups$$ = this.fetchSignupsSubject.asObservable().pipe(
+      debounceTime(500),
+      filter(v => v)
+    ).subscribe(() => {
+      this.api.get<Array<ParsedSheet>>('signups:summarised', {}).subscribe(signupSheets => {
+        this.signupSheets = signupSheets;
+        this.selectedSignupSheet = null;
+        this.selectedSignupItem = null;
+        if (!isEmpty(selectedSignupSheetTitle)) {
+          const ss = signupSheets.find(s => s.spreadSheetTitle.localeCompare(selectedSignupSheetTitle) === 0);
+          if (ss) {
+            this.selectedSignupSheetFormControl.setValue(ss);
+          }
+        }
+      });
+    });
     this.selectedSignupSheetFormControl.valueChanges.subscribe((selected: ParsedSheet) => {
       this.selectedSignupSheet = null;
       this.selectedSignupItem = null;
@@ -86,6 +119,7 @@ export class SignupsComponent implements OnInit, OnDestroy {
     this.selectedSignupItemFormControl.valueChanges.subscribe((selectedSignupItem: SignupItem) => {
       this.selectedSignupItem = selectedSignupItem;
     });
+    this.fetchSignups();
   }
 
   maxCountValidator(control: AbstractControl): { [key: string]: boolean } | null {
@@ -141,11 +175,7 @@ export class SignupsComponent implements OnInit, OnDestroy {
 
 
   fetchSignups(): void {
-    this.api.get<Array<ParsedSheet>>('signups:summarised', {}).subscribe(signupSheets => {
-      this.signupSheets = signupSheets;
-      this.selectedSignupSheet = null;
-      this.selectedSignupItem = null;
-    });
+    this.fetchSignupsSubject.next(true);
   }
 
   getSignupLocation(selectedSignupSheet: SignupSheet): string {

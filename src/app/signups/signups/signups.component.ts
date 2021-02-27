@@ -94,7 +94,7 @@ export class SignupsComponent implements OnInit, OnDestroy {
       debounceTime(500),
       filter(v => v)
     ).subscribe(() => {
-      this.api.get<Array<ParsedSheet>>('signups:summarised', {}).subscribe(signupSheets => {
+      this.api.get<Array<ParsedSheet>>('service/signups:summarised', {}).subscribe(signupSheets => {
         this.signupSheets = signupSheets;
         this.selectedSignupSheet = null;
         this.selectedSignupItem = null;
@@ -110,7 +110,7 @@ export class SignupsComponent implements OnInit, OnDestroy {
       this.selectedSignupSheet = null;
       this.selectedSignupItem = null;
       // tslint:disable-next-line:max-line-length
-      this.api.get<SignupSheet>(`signups:detailed/${encodeURIComponent(selected.spreadsheetId)}/${encodeURIComponent(selected.sheetTitle)}`,
+      this.api.get<SignupSheet>(`service/signups:detailed/${encodeURIComponent(selected.spreadsheetId)}/${encodeURIComponent(selected.sheetTitle)}`,
         {}).subscribe((signupSheet) => {
         this.selectedSignupSheet = signupSheet;
         this.signeesDataSource.data = signupSheet.signees || [];
@@ -158,7 +158,7 @@ export class SignupsComponent implements OnInit, OnDestroy {
         spreadSheetId: this.selectedSignupSheet.spreadsheetId
       };
 
-      this.api.post<boolean>(`signups`, signup).subscribe(result => {
+      this.api.post<boolean>(`service/signups`, signup).subscribe(result => {
         if (result) {
           this.fetchSignups();
           this.snackBar.open(`You successfully signed up.`, 'OK', {
@@ -219,7 +219,7 @@ export class SignupsComponent implements OnInit, OnDestroy {
   }
 
   export(): void {
-    this.api.getBlob('export', {}).subscribe((blob: Blob) => {
+    this.api.getBlob('service/export', {}).subscribe((blob: Blob) => {
         const date = dateFormat(new Date(), 'mmddyyyy_HHMMss');
         FileSaver.saveAs(blob, `export_signups_${date}.csv`);
       },

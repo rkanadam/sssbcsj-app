@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from '../../common-ui/api.service';
-import {Signee, SignupSheet} from '../types';
+import {BhajanSignup, BhajanSignupSheet, MySignups, Signee, SignupSheet} from '../types';
 import * as dateFormat from 'dateformat';
 import {ArrayDataSource, DataSource} from '@angular/cdk/collections';
 
@@ -10,20 +10,22 @@ import {ArrayDataSource, DataSource} from '@angular/cdk/collections';
   styleUrls: ['./my-signups.component.scss']
 })
 export class MySignupsComponent implements OnInit {
-  mySignupSheets: Array<SignupSheet> = [];
+  mySignups: MySignups | null = null;
 
   displayedColumns: string[] = ['position', 'item', 'itemCount', 'signedUpOn'];
+
+  displayedBhajanSignupColumns: string[] = ['position', 'signupType', 'bhajanOrTFD', 'signedUpOn'];
 
   constructor(private api: ApiService) {
   }
 
   ngOnInit(): void {
-    this.api.get<Array<SignupSheet>>('signups:my', {}).subscribe(mySignupSheets => {
-      this.mySignupSheets = mySignupSheets;
+    this.api.get<MySignups>('signups:my', {}).subscribe(mySignups => {
+      this.mySignups = mySignups;
     });
   }
 
-  getSignupLocation(selectedSignupSheet: SignupSheet): string {
+  getSignupLocation(selectedSignupSheet: SignupSheet | BhajanSignupSheet): string {
     return `https://www.google.com/maps/search/${encodeURIComponent(selectedSignupSheet.location)}`;
   }
 
@@ -34,4 +36,9 @@ export class MySignupsComponent implements OnInit {
   getDataSource(signees: Array<Signee> | undefined): DataSource<Signee> {
     return new ArrayDataSource(signees || []);
   }
+
+  getBhajanSignupDataSource(signees: Array<BhajanSignup> | undefined): DataSource<BhajanSignup> {
+    return new ArrayDataSource(signees || []);
+  }
+
 }

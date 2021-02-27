@@ -1,0 +1,52 @@
+<form [formGroup]="selectedSignupSheetForm" (submit)="this.signup()">
+  <div>
+    <ul>
+      <li>Use this form for signing up to lead a devotional song or help setup the altar at
+        the center.
+      </li>
+      <li>Watch out for the communication e-mail on the Thursday prior to when you intend to lead for any changes in
+        location or start time of the service.
+      </li>
+    </ul>
+  </div>
+  <mat-form-field appearance="outline">
+    <mat-label>When do you want to offer ?</mat-label>
+    <mat-select formControlName="selectedSignupSheet" required>
+      <mat-option [value]="signupSheet" *ngFor="let signupSheet of signupSheets">
+        {{formatDate(signupSheet.date)}} - {{signupSheet.sheetTitle}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <ng-container *ngIf="selectedSignupSheet">
+    <mat-form-field appearance="outline">
+      <mat-label>What would you like to offer ?</mat-label>
+      <mat-select formControlName="selectedSignupItem" required>
+        <mat-option [value]="signup" *ngFor="let signup of selectedSignupSheet.signups">
+          {{signup.signupType}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <ng-container formGroupName="optional">
+      <mat-form-field appearance="outline">
+        <mat-label i18n>Bhajan or Thought for the Day</mat-label>
+        <input type="text" matInput formControlName="bhajanOrTFD">
+        <mat-hint i18n>Optional. Only if you know it already</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label i18n>Scale</mat-label>
+        <input type="text" matInput formControlName="scale">
+        <mat-hint i18n>Optional. Only if you know it already</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label i18n>Comments / Notes</mat-label>
+        <textarea matInput formControlName="notes"></textarea>
+      </mat-form-field>
+    </ng-container>
+    <div class="col-12">
+      <button mat-raised-button color="primary" [disabled]="!this.selectedSignupSheetForm.valid" i18n
+              type="submit" i18n>Signup
+      </button>
+    </div>
+  </ng-container>
+</form>

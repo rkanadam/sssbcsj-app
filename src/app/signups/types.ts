@@ -38,3 +38,40 @@ export interface Signee extends SignupItem {
   email: string;
   signedUpOn: Date;
 }
+
+
+export interface BhajanSignup {
+  row: number;
+  signupType: string;
+  bhajanOrTFD: string;
+  scale: string;
+  notes: string;
+  name: string;
+  phoneNumber: string;
+  email: string;
+  signedUpOn: Date;
+}
+
+export interface BhajanSignupSheet {
+  date: string;
+  location: string;
+  description: string;
+  signups: Array<BhajanSignup>;
+  signees?: Array<BhajanSignup>;
+  spreadsheetId: string;
+  sheetTitle: string;
+}
+
+export interface SignupForBhajanRequest {
+  spreadSheetId: string;
+  sheetTitle: string;
+  row: number;
+  bhajanOrTFD?: string;
+  scale?: string;
+  notes?: string;
+}
+
+export interface MySignups {
+  service: Array<SignupSheet> | null;
+  devotion: Array<BhajanSignupSheet> | null;
+}

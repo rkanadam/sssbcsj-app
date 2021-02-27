@@ -11,6 +11,9 @@ export interface Headers {
 export class AuthService {
   private authToken = '';
 
+  constructor() {
+
+  }
   public isLoggedIn(): boolean {
     return !isEmpty(this.authToken);
   }

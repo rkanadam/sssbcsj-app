@@ -33,18 +33,7 @@ export class SigninComponent implements AfterViewInit {
         signInSuccessUrl: 'signups',
         callbacks: {
           signInSuccessWithAuthResult: (authResult: any, redirectUrl?: string): boolean => {
-            const u = firebase.auth().currentUser;
-            u?.getIdToken().then((idToken) => {
-              this.authService.setAuthToken(idToken);
-              if (this.route.snapshot.queryParamMap && this.route.snapshot.queryParamMap.has('returnUrl')) {
-                const url = this.route.snapshot.queryParamMap.get('returnUrl');
-                if (url) {
-                  this.router.navigateByUrl(url);
-                }
-              } else {
-                this.router.navigate(['signups']);
-              }
-            });
+            this.login(firebase.auth().currentUser);
             return false;
           }
         },
@@ -52,7 +41,24 @@ export class SigninComponent implements AfterViewInit {
           firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         ]
       });
+
+      firebase.auth().onAuthStateChanged(user => {
+        this.login(user);
+      });
     }
   }
 
+  private login(u: firebase.User | null): void {
+    u?.getIdToken().then((idToken) => {
+      this.authService.setAuthToken(idToken);
+      if (this.route.snapshot.queryParamMap && this.route.snapshot.queryParamMap.has('returnUrl')) {
+        const url = this.route.snapshot.queryParamMap.get('returnUrl');
+        if (url) {
+          this.router.navigateByUrl(url);
+        }
+      } else {
+        this.router.navigate(['signups']);
+      }
+    });
+  }
 }

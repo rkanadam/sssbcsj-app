@@ -12,6 +12,7 @@ import {HomeComponent} from './home/home/home.component';
 import {HomeModule} from './home/home.module';
 import {AuthGuard} from './auth/auth.guard';
 import {MySignupsComponent} from './signups/my-signups/my-signups.component';
+import {DevotionComponent} from './signups/devotion/devotion.component';
 
 const routes: Routes = [
   {path: '', pathMatch: 'full', redirectTo: 'signups'},
@@ -29,6 +30,9 @@ const routes: Routes = [
       },
       {
         path: 'mySignups', component: MySignupsComponent
+      },
+      {
+        path: 'devotion', component: DevotionComponent
       }
     ]
   }

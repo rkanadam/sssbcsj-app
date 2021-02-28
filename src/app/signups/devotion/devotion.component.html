@@ -16,6 +16,10 @@
         {{formatDate(signupSheet.date)}} - {{signupSheet.sheetTitle}}
       </mat-option>
     </mat-select>
+    <a mat-button *ngIf="selectedSignupSheet" matSuffix mat-icon-button aria-label="Clear" routerLink="."
+       [queryParams]="{q:selectedSignupSheet.spreadsheetId}">
+      <mat-icon>link</mat-icon>
+    </a>
   </mat-form-field>
 
   <ng-container *ngIf="selectedSignupSheet">

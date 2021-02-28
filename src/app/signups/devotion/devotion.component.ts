@@ -56,12 +56,12 @@ export class DevotionComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    let selectedSignupSheetTitle = '';
+    let selectedSpeadsheetId = '';
     this.params$$ = this.route.queryParams
       .pipe(
         map(params => (params.q || '').toString())
       ).subscribe((q) => {
-        selectedSignupSheetTitle = q;
+        selectedSpeadsheetId = q;
         this.fetchSignups();
       });
     this.fetchSignups$$ = this.fetchSignupsSubject.asObservable().pipe(
@@ -72,8 +72,8 @@ export class DevotionComponent implements OnInit, OnDestroy {
         this.signupSheets = signupSheets;
         this.selectedSignupSheet = null;
         this.selectedSignupItem = null;
-        if (!isEmpty(selectedSignupSheetTitle)) {
-          const ss = signupSheets.find(s => s.spreadSheetTitle.localeCompare(selectedSignupSheetTitle) === 0);
+        if (!isEmpty(selectedSpeadsheetId)) {
+          const ss = signupSheets.find(s => s.spreadsheetId.localeCompare(selectedSpeadsheetId) === 0);
           if (ss) {
             this.selectedSignupSheetFormControl.setValue(ss);
           }

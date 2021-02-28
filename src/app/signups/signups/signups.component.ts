@@ -82,12 +82,12 @@ export class SignupsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    let selectedSignupSheetTitle = '';
+    let selectedSpreadsheetId = '';
     this.params$$ = this.route.queryParams
       .pipe(
         map(params => (params.q || '').toString())
       ).subscribe((q) => {
-        selectedSignupSheetTitle = q;
+        selectedSpreadsheetId = q;
         this.fetchSignups();
       });
     this.fetchSignups$$ = this.fetchSignupsSubject.asObservable().pipe(
@@ -98,8 +98,8 @@ export class SignupsComponent implements OnInit, OnDestroy {
         this.signupSheets = signupSheets;
         this.selectedSignupSheet = null;
         this.selectedSignupItem = null;
-        if (!isEmpty(selectedSignupSheetTitle)) {
-          const ss = signupSheets.find(s => s.spreadSheetTitle.localeCompare(selectedSignupSheetTitle) === 0);
+        if (!isEmpty(selectedSpreadsheetId)) {
+          const ss = signupSheets.find(s => s.spreadsheetId.localeCompare(selectedSpreadsheetId) === 0);
           if (ss) {
             this.selectedSignupSheetFormControl.setValue(ss);
           }

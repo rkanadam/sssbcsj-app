@@ -15,7 +15,7 @@ export enum ApiRequestState {
 export class ApiService {
 
   private apiRequest$$ = new Subject<ApiRequestState>();
-  private _isAdmin$: Observable<boolean> | null = null;
+  private cachedIsAdmin$: Observable<boolean> | null = null;
 
   constructor(private httpClient: HttpClient, private utils: UtilsService, private authService: AuthService) {
   }
@@ -65,13 +65,15 @@ export class ApiService {
   }
 
   public isAdmin$(): Observable<boolean> {
-    if (this._isAdmin$) {
-      return this._isAdmin$;
+    if (this.cachedIsAdmin$) {
+      return this.cachedIsAdmin$;
     }
     return this.get<boolean>('isAdmin')
       .pipe(
         tap((isAdmin) => {
-          this._isAdmin$ = of(isAdmin);
+          this.cachedIsAdmin$ = of(isAdmin);
+        }), catchError((err, caught) => {
+          return throwError(caught);
         })
       );
   }

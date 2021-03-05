@@ -1,7 +1,7 @@
 <div>
   <form [formGroup]="selectedSignupSheetForm">
     <div class="row align-items-center">
-      <div class="col-12" *ngIf="api.isAdmin$ () | async">>
+      <div class="col-12" *ngIf="api.isAdmin$ () | async">
         <button mat-raised-button color="primary"
                 title="Export all known signups in a CSV format. This can be a long operation" (click)="export()">Export
         </button>

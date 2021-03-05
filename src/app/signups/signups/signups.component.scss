@@ -5,15 +5,10 @@
 
 mat-form-field {
   width: 100%;
-  margin: 1em 0em;
 }
 
 .error {
   color: red;
-}
-
-.row {
-  margin: 1em 0em;
 }
 
 table {
@@ -45,3 +40,12 @@ td[mat-cell] {
 .highlight {
 }
 
+
+mat-form-field .mat-form-field {
+  &-underline {
+    position: static;
+  }
+  &-subscript-wrapper {
+    position: static;
+  }
+}

@@ -3,14 +3,19 @@
     <button mat-icon-button (click)="sideNav.toggle()" class="menu-icon">
       <mat-icon>menu</mat-icon>
     </button>
-    <h1 i18n class="title">Sri Sathya Sai Baba Center of Central San Jose - Online Signups</h1>
+    <h1 i18n class="title">Online Signups - SSSBCSJ</h1>
   </mat-toolbar>
+  <div [style.display]="mobileQuery.matches ? 'none' : 'block'" color="accent">
+    <a mat-button routerLink="/signups" routerLinkActive="active" i18n>Service</a>
+    <a mat-button routerLink="/devotion" routerLinkActive="active" i18n>Devotion</a>
+    <a mat-button routerLink="/mySignups" routerLinkActive="active" i18n>My Signups</a>
+    <a mat-button routerLink="/profile" routerLinkActive="active" i18n>Profile</a>
+  </div>
 
   <mat-sidenav-container
     [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
     <mat-sidenav #sideNav
                  [mode]="mobileQuery.matches ? 'over' : 'side'"
-                 [opened]="mobileQuery.matches === false"
                  [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">
       <mat-nav-list>
         <a mat-list-item routerLink="/signups" routerLinkActive="active" i18n>Service</a>
@@ -21,9 +26,7 @@
     </mat-sidenav>
 
     <mat-sidenav-content>
-      <div class="container">
-        <router-outlet></router-outlet>
-      </div>
+      <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

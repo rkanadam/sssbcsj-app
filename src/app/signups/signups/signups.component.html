@@ -1,15 +1,16 @@
-<div class="container">
+<div>
   <form [formGroup]="selectedSignupSheetForm">
     <div class="row align-items-center">
-      <div class="col-12" *ngIf="api.isAdmin$ () | async">
+      <div class="col-12" *ngIf="api.isAdmin$ () | async">>
         <button mat-raised-button color="primary"
                 title="Export all known signups in a CSV format. This can be a long operation" (click)="export()">Export
         </button>
       </div>
       <div class="col-12">
         <mat-form-field appearance="outline">
-          <mat-label i18n>Events</mat-label>
-          <mat-select formControlName="selectedSignupSheet">
+          <mat-label i18n>Select an event to signup for</mat-label>
+          <mat-select formControlName="selectedSignupSheet" placeholder="Please select an event to signup for"
+                      #selectedSignupSheetSelect>
             <mat-option [value]="signupSheet" *ngFor="let signupSheet of signupSheets">
               {{formatDate(signupSheet.date)}} - {{signupSheet.spreadSheetTitle}}
             </mat-option>
@@ -23,96 +24,70 @@
         </mat-form-field>
       </div>
       <ng-container *ngIf="selectedSignupSheet">
-        <div class="col-12">
-          <hr/>
-        </div>
         <div class="col-3">
           <b>
             <span i18n>Description</span>
           </b>
         </div>
         <div class="col-9">
-          <p [innerHTML]="parseDescription(selectedSignupSheet.description)">
-          </p>
-        </div>
-        <div class="col-3">
-          <b>
-            <span i18n>Where</span>
-          </b>
-        </div>
-        <div class="col-9">
-          <a [attr.href]="getSignupLocation(selectedSignupSheet)"
-             target="_blank">
-            {{selectedSignupSheet.location}}</a>
-        </div>
-        <div class="col-3">
-          <b>
-            <span i18n>When</span>
-          </b>
-        </div>
-        <div class="col-9">
-          {{selectedSignupSheet.date}}
+          <p [innerHTML]="parseDescription(selectedSignupSheet.description)"></p>
         </div>
         <div class="col-12">
-          <hr/>
+          <b i18n>Where</b>
+          <p><a [attr.href]="getSignupLocation(selectedSignupSheet)"
+                target="_blank">
+            {{selectedSignupSheet.location}}</a>
+          </p>
         </div>
-        <div class="row highlight">
-          <div class="col-3">
-            <b>
-              <span i18n>Item</span>
-            </b>
-          </div>
-          <div class="col-9">
-            <mat-form-field appearance="fill">
-              <mat-label i18n>Item</mat-label>
-              <mat-select formControlName="selectedSignupItem">
-                <mat-option [value]="signupItem" *ngFor="let signupItem of selectedSignupSheet.signupItems">
-                  {{signupItem.item}}
-                </mat-option>
-              </mat-select>
-              <mat-hint *ngIf="selectedSignupItem && selectedSignupItem.notes">{{selectedSignupItem.notes}}</mat-hint>
-            </mat-form-field>
-          </div>
-          <ng-container *ngIf="selectedSignupItem">
-            <div class="col-3">
-              <b>
-                <span i18n>Quantity</span>
-              </b>
-            </div>
-            <div class="col-9">
-              <mat-form-field appearance="fill">
-                <mat-label i18n>Quantity</mat-label>
-                <input type="number" matInput min="1" [attr.max]="selectedSignupItem.itemCount" required
-                       formControlName="selectedSignupItemQuantity">
-                <mat-hint>
+        <div class="col-12">
+          <b i18n>When</b>
+          <p>{{selectedSignupSheet.date}}</p>
+        </div>
+        <div class="col-12">
+          <mat-form-field appearance="fill">
+            <mat-label i18n>Select an item you would like to sign up for</mat-label>
+            <mat-select formControlName="selectedSignupItem" #selectedSignupItemSelect>
+              <mat-option [value]="signupItem" *ngFor="let signupItem of selectedSignupSheet.signupItems">
+                {{signupItem.item}}
+              </mat-option>
+            </mat-select>
+            <mat-hint *ngIf="selectedSignupItem && selectedSignupItem.notes">
+              <p [innerHTML]="parseDescription(
+              selectedSignupItem.notes)"></p></mat-hint>
+          </mat-form-field>
+        </div>
+        <div class="col-12" *ngIf="selectedSignupItem && selectedSignupItem.itemCount > 1">
+          <mat-form-field appearance="fill">
+            <mat-label i18n>How many would you like to sign up for ?</mat-label>
+            <input type="number" matInput min="1" [attr.max]="selectedSignupItem.itemCount" required
+                   formControlName="selectedSignupItemQuantity">
+            <mat-hint>
               <span>Please select how many of the items you would like to signup
                 for. {{selectedSignupItem.itemCount}} remaining</span>
-                  <div
-                    class="error"
-                    *ngIf="selectedSignupItemQuantityFormControl.errors && selectedSignupItemQuantityFormControl.errors.max">
-                    The maximum you can signup for is {{selectedSignupItem.itemCount}}
-                  </div>
-                  <div
-                    i18n
-                    class="error"
-                    *ngIf="selectedSignupItemQuantityFormControl.errors && selectedSignupItemQuantityFormControl.errors.min">
-                    The minimum you can signup for is 1
-                  </div>
-                  <div
-                    i18n
-                    class="error"
-                    *ngIf="selectedSignupItemQuantityFormControl.errors && selectedSignupItemQuantityFormControl.errors.integer">
-                    Please enter a whole number only
-                  </div>
-                </mat-hint>
-              </mat-form-field>
-            </div>
-          </ng-container>
+            </mat-hint>
+            <mat-error>
+              <div
+                class="error"
+                *ngIf="selectedSignupItemQuantityFormControl.errors && selectedSignupItemQuantityFormControl.errors.max">
+                The maximum you can signup for is {{selectedSignupItem.itemCount}}
+              </div>
+              <div
+                i18n
+                class="error"
+                *ngIf="selectedSignupItemQuantityFormControl.errors && selectedSignupItemQuantityFormControl.errors.min">
+                The minimum you can signup for is 1
+              </div>
+              <div
+                i18n
+                class="error"
+                *ngIf="selectedSignupItemQuantityFormControl.errors && selectedSignupItemQuantityFormControl.errors.integer">
+                Please enter a whole number only
+              </div>
+            </mat-error>
+          </mat-form-field>
         </div>
       </ng-container>
-    </div>
-    <div class="row" *ngIf="selectedSignupSheet && selectedSignupItem">
-      <div class="col-12">
+      <div class="col-12" *ngIf="selectedSignupSheet && selectedSignupItem">
         <button mat-raised-button color="primary" [disabled]="!this.selectedSignupSheetForm.valid" i18n
                 (click)="signup()">Signup
         </button>

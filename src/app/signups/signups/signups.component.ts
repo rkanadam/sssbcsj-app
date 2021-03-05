@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MediaMatcher} from '@angular/cdk/layout';
 import {Subject, Subscription} from 'rxjs';
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms';
@@ -15,6 +15,7 @@ import * as FileSaver from 'file-saver';
 import {ActivatedRoute} from '@angular/router';
 import {debounceTime, filter, map} from 'rxjs/operators';
 import {isEmpty} from 'lodash-es';
+import {MatSelect} from '@angular/material/select';
 
 const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/i;
 
@@ -30,7 +31,7 @@ export class SignupsComponent implements OnInit, OnDestroy {
 
 
   private params$$: Subscription | undefined;
-  selectedSignupSheetFormControl = new FormControl();
+  selectedSignupSheetFormControl = new FormControl(null);
   selectedSignupSheet: SignupSheet | null = null;
   selectedSignupItemFormControl = new FormControl();
   selectedSignupItem: SignupItem | null = null;
@@ -53,6 +54,10 @@ export class SignupsComponent implements OnInit, OnDestroy {
 
   private fetchSignupsSubject = new Subject<boolean>();
   private fetchSignups$$: Subscription | null = null;
+
+  @ViewChild('selectedSignupSheetSelect') selectedSignupSheetSelect: MatSelect | null = null;
+  @ViewChild('selectedSignupItemSelect') selectedSignupItemSelect: MatSelect | null = null;
+
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               media: MediaMatcher,
@@ -103,6 +108,12 @@ export class SignupsComponent implements OnInit, OnDestroy {
           if (ss) {
             this.selectedSignupSheetFormControl.setValue(ss);
           }
+        } else {
+          setTimeout(() => {
+            if (this.selectedSignupSheetSelect) {
+              this.selectedSignupSheetSelect.open();
+            }
+          }, 1);
         }
       });
     });
@@ -118,6 +129,7 @@ export class SignupsComponent implements OnInit, OnDestroy {
     });
     this.selectedSignupItemFormControl.valueChanges.subscribe((selectedSignupItem: SignupItem) => {
       this.selectedSignupItem = selectedSignupItem;
+      this.selectedSignupItemQuantityFormControl.setValue(1);
     });
     this.fetchSignups();
   }

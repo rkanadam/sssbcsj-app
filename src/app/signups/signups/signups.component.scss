@@ -41,11 +41,14 @@ td[mat-cell] {
 }
 
 
-mat-form-field .mat-form-field {
-  &-underline {
+::ng-deep mat-form-field {
+  .mat-form-field-underline {
     position: static;
   }
-  &-subscript-wrapper {
+
+  .mat-form-field-subscript-wrapper {
     position: static;
   }
 }
+
+

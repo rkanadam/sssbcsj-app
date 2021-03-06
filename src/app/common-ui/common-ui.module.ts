@@ -22,6 +22,7 @@ import {MatTableModule} from '@angular/material/table';
 import {MatSortModule} from '@angular/material/sort';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 
 @NgModule({
@@ -52,7 +53,8 @@ import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
     MatSortModule,
     MatCheckboxModule,
     CKEditorModule,
-    FormsModule
+    FormsModule,
+    MatExpansionModule
   ],
   providers: [UtilsService]
 })

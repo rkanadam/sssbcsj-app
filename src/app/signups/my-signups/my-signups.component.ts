@@ -3,6 +3,7 @@ import {ApiService} from '../../common-ui/api.service';
 import {BhajanSignup, BhajanSignupSheet, MySignups, Signee, SignupSheet} from '../types';
 import * as dateFormat from 'dateformat';
 import {ArrayDataSource, DataSource} from '@angular/cdk/collections';
+import {UtilsService} from '../../common-ui/utils.service';
 
 @Component({
   selector: 'app-my-signups',
@@ -12,11 +13,11 @@ import {ArrayDataSource, DataSource} from '@angular/cdk/collections';
 export class MySignupsComponent implements OnInit {
   mySignups: MySignups | null = null;
 
-  displayedColumns: string[] = ['position', 'item', 'itemCount', 'signedUpOn'];
+  displayedColumns: string[] = ['position', 'item', 'itemCount', 'name', 'email', 'phoneNumber', 'signedUpOn'];
 
-  displayedBhajanSignupColumns: string[] = ['position', 'signupType', 'bhajanOrTFD', 'signedUpOn'];
+  displayedBhajanSignupColumns: string[] = ['position', 'signupType', 'bhajanOrTFD', 'name', 'email', 'phoneNumber', 'signedUpOn'];
 
-  constructor(private api: ApiService) {
+  constructor(private api: ApiService, private utils: UtilsService) {
   }
 
   ngOnInit(): void {
@@ -40,5 +41,10 @@ export class MySignupsComponent implements OnInit {
   getBhajanSignupDataSource(signees: Array<BhajanSignup> | undefined): DataSource<BhajanSignup> {
     return new ArrayDataSource(signees || []);
   }
+
+  parseDescription(description: string): string {
+    return this.utils.parseMultiLineString(description);
+  }
+
 
 }

@@ -16,6 +16,7 @@ import {ActivatedRoute} from '@angular/router';
 import {debounceTime, filter, map} from 'rxjs/operators';
 import {isEmpty} from 'lodash-es';
 import {MatSelect} from '@angular/material/select';
+import {UtilsService} from '../../common-ui/utils.service';
 
 const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/i;
 
@@ -64,7 +65,8 @@ export class SignupsComponent implements OnInit, OnDestroy {
               public api: ApiService,
               private route: ActivatedRoute,
               private snackBar: MatSnackBar,
-              private dialog: MatDialog
+              private dialog: MatDialog,
+              private utils: UtilsService
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this.mobileQuery.addEventListener('change', this.mobileQueryListener);
@@ -245,8 +247,6 @@ export class SignupsComponent implements OnInit, OnDestroy {
   }
 
   parseDescription(description: string): string {
-    return description
-      .replace(URL_REGEX, (url: string) => `<a href="${url}" target="_blank">${url}</a>`)
-      .replace(/\n/ig, '<br/>');
+    return this.utils.parseMultiLineString(description);
   }
 }

@@ -11,6 +11,11 @@
     <a mat-button routerLink="/mySignups" routerLinkActive="active" i18n>My Signups</a>
     <a mat-button routerLink="/profile" routerLinkActive="active" i18n>Profile</a>
   </div>
+  <div class="warning" (click)="openVerifyPhoneNumberDialog()" *ngIf="!user?.phoneNumber">
+    <mat-icon>error</mat-icon>
+    &nbsp;
+    <span i18n>Please do provide a phone number to reach you at. Click here</span>
+  </div>
 
   <mat-sidenav-container
     [style.marginTop.px]="mobileQuery.matches ? 56 : 0">

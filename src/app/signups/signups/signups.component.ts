@@ -53,6 +53,10 @@ export class SignupsComponent implements OnInit, OnDestroy {
   initialSelection = [];
   selectedSignees = new SelectionModel<Signee>(true, this.initialSelection);
 
+  signupItemsDataSource = new MatTableDataSource<SignupItem>();
+  selectedSignupItems = new SelectionModel<SignupItem>(true, []);
+
+
   private fetchSignupsSubject = new Subject<boolean>();
   private fetchSignups$$: Subscription | null = null;
 
@@ -127,6 +131,12 @@ export class SignupsComponent implements OnInit, OnDestroy {
         {}).subscribe((signupSheet) => {
         this.selectedSignupSheet = signupSheet;
         this.signeesDataSource.data = signupSheet.signees || [];
+        if (this.isTabularDisplayPossible()) {
+          this.signupItemsDataSource.data = signupSheet.signupItems;
+        } else {
+          this.signupItemsDataSource.data = [];
+        }
+        this.selectedSignupItems.clear();
       });
     });
     this.selectedSignupItemFormControl.valueChanges.subscribe((selectedSignupItem: SignupItem) => {
@@ -163,15 +173,38 @@ export class SignupsComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  signup(): void {
+  signupOneItem(): void {
     if (this.selectedSignupItem && this.selectedSignupSheet) {
-      const signup: Signup = {
+      const signup = {
         itemCount: parseInt(this.selectedSignupItemQuantityFormControl.value, 10),
         itemIndex: this.selectedSignupItem.itemIndex,
-        sheetTitle: this.selectedSignupSheet.sheetTitle,
-        spreadSheetId: this.selectedSignupSheet.spreadsheetId
       };
+      this.signup([signup]);
+    }
+  }
 
+  signupMultipleItems(): void {
+    if (this.selectedSignupSheet && !this.selectedSignupItems.isEmpty()) {
+      const items = this.selectedSignupItems.selected.map(s => ({
+          itemCount: s.itemCount,
+          itemIndex: s.itemIndex
+        })
+      );
+      this.signup(items);
+    }
+  }
+
+
+  private signup(items: Array<{
+    itemIndex: number;
+    itemCount: number;
+  }>): void {
+    if (this.selectedSignupSheet) {
+      const signup: Signup = {
+        spreadSheetId: this.selectedSignupSheet.spreadsheetId,
+        sheetTitle: this.selectedSignupSheet.sheetTitle,
+        items
+      };
       this.api.post<boolean>(`service/signups`, signup).subscribe(result => {
         if (result) {
           this.fetchSignups();
@@ -186,7 +219,6 @@ export class SignupsComponent implements OnInit, OnDestroy {
       });
     }
   }
-
 
   fetchSignups(): void {
     this.fetchSignupsSubject.next(true);
@@ -244,6 +276,14 @@ export class SignupsComponent implements OnInit, OnDestroy {
         });
       },
     );
+  }
+
+  isTabularDisplayPossible(): boolean {
+    if (this.selectedSignupSheet && !isEmpty(this.selectedSignupSheet.signupItems)) {
+      const hasAtleastOneItemWhichNeedsMoreThanOne = this.selectedSignupSheet.signupItems.find(s => s.itemCount > 1);
+      return isEmpty(hasAtleastOneItemWhichNeedsMoreThanOne);
+    }
+    return false;
   }
 
   parseDescription(description: string): string {

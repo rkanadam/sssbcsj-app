@@ -28,8 +28,10 @@ export interface SignupSheet {
 export interface Signup {
   spreadSheetId: string;
   sheetTitle: string;
-  itemIndex: number;
-  itemCount: number;
+  items: Array<{
+    itemIndex: number;
+    itemCount: number;
+  }>;
 }
 
 export interface Signee extends SignupItem {

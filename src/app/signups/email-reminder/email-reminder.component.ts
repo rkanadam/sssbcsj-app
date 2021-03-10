@@ -236,6 +236,7 @@ export class EmailReminderComponent {
 </body>
 </html>
 `;
+  disableSend = false;
 
 
   constructor(private dialogRef: MatDialogRef<EmailReminderComponent>, private api: ApiService,
@@ -270,6 +271,7 @@ export class EmailReminderComponent {
           to: signee.email
         };
       });
+      this.disableSend = true;
       this.api.post<boolean>('sendEMail', emails).subscribe((result) => {
         if (result) {
           this.snackBar.open(`Emails were successfully sent to ${this.data.signees?.length} numbers.`, 'OK', {
@@ -280,8 +282,10 @@ export class EmailReminderComponent {
             duration: 2000
           });
         }
+        this.disableSend = false;
         this.dialogRef.close();
       }, (error) => {
+        this.disableSend = false;
         this.snackBar.open(`Something went wrong, please try again in sometime.`, 'OK', {
           duration: 2000
         });

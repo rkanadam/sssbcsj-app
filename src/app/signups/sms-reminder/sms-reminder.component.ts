@@ -40,7 +40,7 @@ export class SmsReminderComponent {
 
     Thank you! Sairam!
 `;
-
+  disableSend = false;
 
   constructor(private dialogRef: MatDialogRef<SmsReminderComponent>, private api: ApiService,
               private snackBar: MatSnackBar,
@@ -48,6 +48,7 @@ export class SmsReminderComponent {
   }
 
   sendSMS(): void {
+    this.disableSend = true;
     if (this.data.signupSheet && this.data.signees) {
       // '@date', '@description', '@email', '@item', '@itemCount', '@name', '@notes', '@phoneNumber', '@quantity', '@signedUpOn', '@title'
       const smses = this.data.signees.map(signee => {
@@ -83,8 +84,10 @@ export class SmsReminderComponent {
             duration: 2000
           });
         }
+        this.disableSend = false;
         this.dialogRef.close();
       }, (error) => {
+        this.disableSend = false;
         this.snackBar.open(`Something went wrong, please try again in sometime.`, 'OK', {
           duration: 2000
         });

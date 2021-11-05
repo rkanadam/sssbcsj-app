@@ -100,8 +100,8 @@ export class DevotionComponent implements OnInit, OnDestroy {
     this.fetchSignupsSubject.next(true);
   }
 
-  formatDate(date: Date): string {
-    return dateFormat(date, 'DDDD, mmm/dd/yyyy');
+  formatDate(date: Date | number): string {
+    return dateFormat(date, 'DDDD, mmm/dd/yyyy', true);
   }
 
 

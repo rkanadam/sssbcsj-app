@@ -228,7 +228,7 @@ export class SignupsComponent implements OnInit, OnDestroy {
     return `https://www.google.com/maps/search/${encodeURIComponent(selectedSignupSheet.location)}`;
   }
 
-  formatDate(date: Date): string {
+  formatDate(date: Date | number): string {
     return dateFormat(date, 'DDDD, mmm/dd/yyyy');
   }
 

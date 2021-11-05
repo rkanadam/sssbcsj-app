@@ -2,7 +2,7 @@ export interface ParsedSheet {
   spreadsheetId: string;
   spreadSheetTitle: string;
   sheetTitle: string;
-  date: Date;
+  date: number;
 }
 
 export interface SignupItem {
